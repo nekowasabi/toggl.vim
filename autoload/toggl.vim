@@ -34,6 +34,21 @@ function! toggl#start(args) abort
   echo 'Start task: ' . res.description
 endfunction
 
+function! toggl#select_start() abort
+  let tmp = @@
+  silent normal gvy
+  let selected = @@
+  let @@ = tmp
+  let args = s:parse_args(selected)
+  if has_key(args, "project")
+    let pid = s:get_pid(args.project)
+  else
+    let pid = 0
+  endif
+  let res = toggl#time_entries#start(join(args.args, " "), pid, args.tags)
+  echo 'Start task: ' . res.description
+endfunction
+
 function! toggl#stop() abort
   let now = toggl#time_entries#get_running()
   if now is 0
