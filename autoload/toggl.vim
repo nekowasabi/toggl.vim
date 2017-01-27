@@ -85,6 +85,11 @@ function! toggl#tags() abort
   return toggl#workspaces#tags(wid)
 endfunction
 
+function! toggl#task() abort
+  let now = toggl#time_entries#get_running()
+  echo now.description
+endfunction
+
 function! toggl#update_current(data) abort
   let now = toggl#time_entries#get_running()
   if now is 0
