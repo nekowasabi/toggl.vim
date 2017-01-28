@@ -55,8 +55,18 @@ function! toggl#stop() abort
     echo 'No task is running'
     return
   endif
-  call toggl#time_entries#stop(now.id)
-  echo 'Stop task: ' . now.description
+  let stop = toggl#time_entries#stop(now.id)
+  let duration = stop.data.duration
+  let hour = duration / 3600
+  let minute = (duration / 60) % 60
+  if hour < 10
+    let hour = '0' . hour
+  endif
+  if minute < 10
+    let minute = '0' . minute
+  endif
+  let time = hour . ':' . minute
+  echo 'Stop task: ' . now.description . ' "' . time . '"'
 endfunction
 
 function! s:getftime_of_days_ago(days) abort
