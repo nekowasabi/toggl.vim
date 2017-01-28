@@ -7,6 +7,7 @@ set cpo&vim
 
 command!        -nargs=1 TogglStart call toggl#start(<q-args>)
 command! -range -nargs=0 TogglSelectStart call toggl#select_start()
+command!        -nargs=0 TogglUpdate call toggl#task_update()
 command!        -nargs=0 TogglStop call toggl#stop()
 command!        -nargs=0 TogglTask call toggl#task()
 command!        -nargs=0 TogglTime call toggl#time()

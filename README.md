@@ -30,10 +30,30 @@ Start task
 :TogglStart task name +project @tag1 @tag2
 ```
 
+```vim
+:TogglStart task name
+```
+
+```vim
+:TogglSelectStart
+```
+
 Stop current task
 
 ```vim
 :TogglStop
+```
+
+Check task
+
+```vim
+:TogglTask
+```
+
+Check time
+
+```vim
+:TogglTime
 ```
 
 unite.vim interface
@@ -53,6 +73,38 @@ which helps you to restart past time entries.
 
 which helps you to change the project of current task.
 
+Show lightline.vim
+--------------------
+
+You can always check task on vim.
+
+```vim
+let g:lightline = {
+            \ 'colorscheme': 'jellybeans',
+            \ 'active': {
+            \   'left': [
+            \       ['mode', 'paste'],
+            \       ['readonly', 'filename', 'modified']
+            \   ],
+            \   'right': [ [ 'syntastic', 'lineinfo' ],
+            \              [ 'toggl_task', 'toggl_time', 'percent' ],
+            \              [ 'fileformat', 'fileencoding', 'filetype' ] ]
+            \ },
+            \ 'component_function': {
+            \   'toggl_task': 'toggl#task',
+            \   'toggl_time': 'toggl#time',
+            \ }
+            \ }
+```
+
+Sample key mapping
+-------
+
+```vim
+let g:toggl_api_token = "xxxxxxxxxx"
+nnoremap tt :TogglStop<CR>
+vnoremap tt :TogglSelectStart<CR>
+```
 
 License
 -------
