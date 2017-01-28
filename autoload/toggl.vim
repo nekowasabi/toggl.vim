@@ -31,6 +31,8 @@ function! toggl#start(args) abort
     let pid = 0
   endif
   let res = toggl#time_entries#start(join(args.args, " "), pid, args.tags)
+  let @9 = res.description
+  let @8 = res.duration
   echo 'Start task: ' . res.description
 endfunction
 
@@ -39,14 +41,7 @@ function! toggl#select_start() abort
   silent normal gvy
   let selected = @@
   let @@ = tmp
-  let args = s:parse_args(selected)
-  if has_key(args, "project")
-    let pid = s:get_pid(args.project)
-  else
-    let pid = 0
-  endif
-  let res = toggl#time_entries#start(join(args.args, " "), pid, args.tags)
-  echo 'Start task: ' . res.description
+  call toggl#start(selected)
 endfunction
 
 function! toggl#stop() abort
@@ -55,17 +50,11 @@ function! toggl#stop() abort
     echo 'No task is running'
     return
   endif
+  let @9 = 'free'
+  let @8 = '0'
   let stop = toggl#time_entries#stop(now.id)
   let duration = stop.data.duration
-  let hour = duration / 3600
-  let minute = (duration / 60) % 60
-  if hour < 10
-    let hour = '0' . hour
-  endif
-  if minute < 10
-    let minute = '0' . minute
-  endif
-  let time = hour . ':' . minute
+  let time = toggl#get_time(duration)
   echo 'Stop task: ' . now.description . ' "' . time . '"'
 endfunction
 
@@ -110,9 +99,23 @@ function! toggl#tags() abort
   return toggl#workspaces#tags(wid)
 endfunction
 
-function! toggl#task() abort
+function! toggl#task_update() abort
   let now = toggl#time_entries#get_running()
+  let @9 = now.description
+  let @8 = now.duration
   echo now.description
+endfunction
+
+function! toggl#task() abort
+  return @9
+endfunction
+
+function! toggl#time() abort
+  let time = toggl#get_time(localtime() + @8)
+  if @8 == 0
+    time = ''
+  endif
+  return time
 endfunction
 
 function! toggl#update_current(data) abort
@@ -122,6 +125,19 @@ function! toggl#update_current(data) abort
     return
   endif
   return toggl#time_entries#update(now.id, a:data)
+endfunction
+
+function! toggl#get_time(duration) abort
+  let hour = a:duration / 3600
+  let minute = (a:duration / 60) % 60
+  if hour < 10
+    let hour = '0' . hour
+  endif
+  if minute < 10
+    let minute = '0' . minute
+  endif
+  let time = hour . ':' . minute
+  return time
 endfunction
 
 let &cpo = s:save_cpo
