@@ -99,11 +99,12 @@ function! toggl#tags() abort
   return toggl#workspaces#tags(wid)
 endfunction
 
-function! toggl#task_update() abort
+function! toggl#task_cache_update() abort
   let now = toggl#time_entries#get_running()
   let @9 = now.description
   let @8 = now.duration
-  echo now.description
+  let time = toggl#get_time(localtime() + @8)
+  echo now.description . ' ' . time
 endfunction
 
 function! toggl#task() abort
@@ -113,7 +114,7 @@ endfunction
 function! toggl#time() abort
   let time = toggl#get_time(localtime() + @8)
   if @8 == 0
-    time = ''
+    let time = ''
   endif
   return time
 endfunction
