@@ -44,6 +44,12 @@ Stop current task
 :TogglStop
 ```
 
+Update cache
+
+```vim
+:TogglCacheUpdate
+```
+
 Check task
 
 ```vim
