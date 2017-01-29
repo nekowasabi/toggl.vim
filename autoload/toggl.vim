@@ -31,8 +31,7 @@ function! toggl#start(args) abort
     let pid = 0
   endif
   let res = toggl#time_entries#start(join(args.args, " "), pid, args.tags)
-  let @9 = res.description
-  let @8 = res.duration
+  call s:save_settings(res.description, res.duration)
   echo 'Start task: ' . res.description
 endfunction
 
@@ -50,8 +49,7 @@ function! toggl#stop() abort
     echo 'No task is running'
     return
   endif
-  let @9 = 'free'
-  let @8 = '0'
+  call s:save_settings('free', 0)
   let stop = toggl#time_entries#stop(now.id)
   let duration = stop.data.duration
   let time = toggl#get_time(duration)
@@ -102,24 +100,22 @@ endfunction
 function! toggl#task_cache_update() abort
   let now = toggl#time_entries#get_running()
   if now is 0
-    let @9 = 'free'
-    let @8 = 0
+    call s:save_settings('free', 0)
     echo "No task is running"
     return
   endif
-  let @9 = now.description
-  let @8 = now.duration
-  let time = toggl#get_time(localtime() + @8)
+  call s:save_settings(now.description, now.duration)
+  let time = toggl#get_time(localtime() + s:load_settings()["time"])
   echo now.description . ' ' . time
 endfunction
 
 function! toggl#task() abort
-  return @9
+  return s:load_settings()["task"]
 endfunction
 
 function! toggl#time() abort
-  let time = toggl#get_time(localtime() + @8)
-  if @8 == 0
+  let time = toggl#get_time(localtime() + s:load_settings()["time"])
+  if s:load_settings()["time"] == 0
     let time = ''
   endif
   return time
@@ -145,6 +141,23 @@ function! toggl#get_time(duration) abort
   endif
   let time = hour . ':' . minute
   return time
+endfunction
+
+let s:configfile = expand('~/.toggl-vim')
+
+function! s:save_settings(task, time)
+  let config = {'task': a:task, 'time': a:time}
+  call writefile([string(config)], s:configfile)
+endfunction
+
+function! s:load_settings()
+  if filereadable(s:configfile)
+    silent! sandbox let config = eval(join(readfile(s:configfile), ''))
+    return config
+  else
+    let v:errmsg = "[Please call :TogglCacheUpdate] "
+    return 0
+  endif
 endfunction
 
 let &cpo = s:save_cpo
