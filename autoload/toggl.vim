@@ -101,6 +101,12 @@ endfunction
 
 function! toggl#task_cache_update() abort
   let now = toggl#time_entries#get_running()
+  if now is 0
+    let @9 = 'free'
+    let @8 = 0
+    echo "No task is running"
+    return
+  endif
   let @9 = now.description
   let @8 = now.duration
   let time = toggl#get_time(localtime() + @8)
