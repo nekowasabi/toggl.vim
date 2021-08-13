@@ -33,6 +33,7 @@ function! toggl#start(args) abort
   let res = toggl#time_entries#start(join(args.args, " "), pid, args.tags)
   call s:save_settings(res.description, res.duration)
   echo 'Start task: ' . res.description
+	let g:toggl_task = res.description
 endfunction
 
 function! toggl#select_start() abort
@@ -54,6 +55,7 @@ function! toggl#stop() abort
   let duration = stop.data.duration
   let time = toggl#get_time(duration)
   echo 'Stop task: ' . now.description . ' "' . time . '"'
+	let g:toggl_task = 'no task'
 endfunction
 
 function! s:getftime_of_days_ago(days) abort

@@ -9,7 +9,7 @@ let s:V = vital#of("vital")
 let s:http = s:V.import("Web.HTTP")
 let s:json = s:V.import("Web.JSON")
 
-let s:toggl_url_base = "https://www.toggl.com/api/v8/"
+let s:toggl_url_base = "https://api.track.toggl.com/api/v8/"
 if !exists("g:toggl_api_token")
   echoerr "API token for Toggl is not set"
 endif
